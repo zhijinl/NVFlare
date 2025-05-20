@@ -64,6 +64,9 @@ class PropKey:
     CAPACITY = "capacity"
     NUM_GPUS = "num_of_gpus"
     GPU_MEM = "mem_per_gpu_in_GiB"
+    CC_CONFIG = "cc_config"
+    CC_CONFIG_DICT = "cc_config_dict"
+    CC_ENABLED = "cc_enabled"
 
     # the following are internal properties added by builders during provision
     PARENT = "parent"
@@ -71,6 +74,7 @@ class PropKey:
     FQSN = "__fqsn__"
     IS_LEAF = "__is_leaf__"
     COMM_CONFIG_ARGS = "__comm_config_args__"
+    AUTHZ_SECTION_KEY = "__authz_section_key__"
 
 
 class CtxKey(WorkDir, PropKey):
@@ -79,6 +83,7 @@ class CtxKey(WorkDir, PropKey):
     TEMP_FILES_LOADED = "__temp_files_loaded__"
     PROVISION_MODE = "__provision_model__"
     LOGGER = "__logger__"
+    BUILD_ERROR = "__build_error__"
     LAST_PROD_STAGE = "last_prod_stage"
     SERVER_NAME = "server_name"
     ROOT_CERT = "root_cert"
@@ -115,6 +120,7 @@ class OverseerRole:
 
 
 class TemplateSectionKey:
+    ADM_NOTEBOOK = "adm_notebook"
     START_SERVER_SH = "start_svr_sh"
     START_CLIENT_SH = "start_cln_sh"
     DOCKER_BUILD_SH = "docker_build_sh"
@@ -135,6 +141,7 @@ class TemplateSectionKey:
     LOCAL_CLIENT_RESOURCES = "local_client_resources"
     SAMPLE_PRIVACY = "sample_privacy"
     DEFAULT_AUTHZ = "default_authz"
+    CC_AUTHZ = "cc_authz"
     SERVER_README = "readme_fs"
     CLIENT_README = "readme_fc"
     ADMIN_README = "readme_am"
@@ -177,6 +184,7 @@ class ProvFileName:
     README_TXT = "readme.txt"
     FED_ADMIN_JSON = "fed_admin.json"
     FL_ADMIN_SH = "fl_admin.sh"
+    SYSTEM_INFO_IPYNB = "system_info.ipynb"
     SIGNATURE_JSON = "signature.json"
     COMPOSE_YAML = "compose.yaml"
     ENV = ".env"

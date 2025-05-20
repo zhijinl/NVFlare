@@ -13,7 +13,8 @@
 # limitations under the License.
 
 """Edge Task Generator - for test only
-Randomly generate edge tasks
+Randomly generate edge tasks.
+It should be installed to the CP.
 """
 import threading
 import time
@@ -22,9 +23,9 @@ import uuid
 from nvflare.apis.event_type import EventType
 from nvflare.apis.fl_context import FLContext
 from nvflare.apis.signal import Signal
-from nvflare.edge.constants import EdgeContextKey
+from nvflare.edge.constants import EdgeApiStatus, EdgeContextKey
 from nvflare.edge.constants import EdgeEventType as EdgeEventType
-from nvflare.edge.constants import EdgeProtoKey, Status
+from nvflare.edge.constants import EdgeProtoKey
 from nvflare.widgets.widget import Widget
 
 
@@ -55,7 +56,7 @@ class EdgeTaskGenerator(Widget):
         }
 
     def _generate_tasks(self):
-        caps = ["xgb", "llm"]
+        caps = {"methods": ["xgb", "llm"]}
         while True:
             if self.abort_signal.triggered:
                 self.logger.info("received abort signal - exiting")
@@ -71,7 +72,7 @@ class EdgeTaskGenerator(Widget):
                         assert isinstance(result, dict)
                         status = result[EdgeProtoKey.STATUS]
                         job_id = result[EdgeProtoKey.DATA]
-                        self.logger.info(f"job reply from ETD: {status=} {job_id=}")
+                        self.logger.debug(f"job reply from ETD: {status=} {job_id=}")
                         if job_id:
                             self.job_id = job_id
                     else:
@@ -87,9 +88,9 @@ class EdgeTaskGenerator(Widget):
                     else:
                         status = result[EdgeProtoKey.STATUS]
                         edge_reply = result[EdgeProtoKey.DATA]
-                        self.logger.info(f"task reply from ETD: {status=} {edge_reply=}")
+                        self.logger.debug(f"task reply from ETD: {status=} {edge_reply=}")
 
-                        if status == Status.NO_JOB:
+                        if status == EdgeApiStatus.NO_JOB:
                             # job already finished
                             self.job_id = None
 

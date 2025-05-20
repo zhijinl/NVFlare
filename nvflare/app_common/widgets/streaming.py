@@ -77,18 +77,16 @@ class AnalyticsSender(Widget):
 
 
 class AnalyticsReceiver(Widget, ABC):
-    def __init__(self, events: Optional[List[str]] = None, client_side_supported: bool = False):
+    def __init__(self, events: Optional[List[str]] = None):
         """Receives analytic data.
 
         Args:
             events (optional, List[str]): A list of event that this receiver will handle.
-            client_side_supported (bool): Whether the client side is supported.
         """
         super().__init__()
         if events is None:
             events = [ANALYTIC_EVENT_TYPE, f"fed.{ANALYTIC_EVENT_TYPE}"]
         self.events = events
-        self.client_side_supported = client_side_supported
         self._initialized = False
         self._save_lock = Lock()
         self._end = False
@@ -137,11 +135,6 @@ class AnalyticsReceiver(Widget, ABC):
             self._handle_end_run_event(fl_ctx)
 
     def _handle_start_run_event(self, fl_ctx: FLContext):
-        if not self._is_supported(fl_ctx):
-            self.log_error(
-                fl_ctx, f"This receiver is not supported on the site {fl_ctx.get_identity_name()}.", fire_event=False
-            )
-            return
         try:
             self.initialize(fl_ctx)
         except Exception as e:
@@ -185,12 +178,6 @@ class AnalyticsReceiver(Widget, ABC):
             except Exception as e:
                 # catch the exception so the job can continue
                 self.log_error(fl_ctx, f"Receiver finalize failed with {e}.", fire_event=False)
-
-    def _is_supported(self, fl_ctx: FLContext) -> bool:
-        if not self.client_side_supported:
-            identity = fl_ctx.get_identity_name()
-            return "server" in identity
-        return True
 
     def _get_record_origin(self, fl_ctx: FLContext, data: Shareable) -> Optional[str]:
         if fl_ctx.get_prop(FLContextKey.EVENT_SCOPE) == EventScope.FEDERATION:

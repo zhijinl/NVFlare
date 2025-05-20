@@ -171,7 +171,13 @@ class StaticFileBuilder(Builder):
                 exe=True,
             )
 
-        ctx.build_from_template(dest_dir, TemplateSectionKey.START_SERVER_SH, ProvFileName.START_SH, exe=True)
+        ctx.build_from_template(
+            dest_dir,
+            TemplateSectionKey.START_SERVER_SH,
+            ProvFileName.START_SH,
+            replacement={"ha_mode": "false"},
+            exe=True,
+        )
 
         ctx.build_from_template(
             dest_dir,
@@ -196,9 +202,10 @@ class StaticFileBuilder(Builder):
             dest_dir, TemplateSectionKey.SAMPLE_PRIVACY, ProvFileName.PRIVACY_JSON_SAMPLE, exe=False
         )
 
-        ctx.build_from_template(
-            dest_dir, TemplateSectionKey.DEFAULT_AUTHZ, ProvFileName.AUTHORIZATION_JSON_DEFAULT, exe=False
-        )
+        # other builder (e.g. CC) can set the AUTHZ_SECTION_KEY to specify authorization policies for the server
+        authz_section_key = server.get_prop(PropKey.AUTHZ_SECTION_KEY, TemplateSectionKey.DEFAULT_AUTHZ)
+
+        ctx.build_from_template(dest_dir, authz_section_key, ProvFileName.AUTHORIZATION_JSON_DEFAULT, exe=False)
 
         # workspace folder file
         dest_dir = ctx.get_ws_dir(server)
@@ -325,7 +332,10 @@ class StaticFileBuilder(Builder):
             ProvFileName.PRIVACY_JSON_SAMPLE,
         )
 
-        ctx.build_from_template(dest_dir, TemplateSectionKey.DEFAULT_AUTHZ, ProvFileName.AUTHORIZATION_JSON_DEFAULT)
+        # other builder (e.g. CC) can set the AUTHZ_SECTION_KEY to specify authorization policies for this client
+        authz_section_key = client.get_prop(PropKey.AUTHZ_SECTION_KEY, TemplateSectionKey.DEFAULT_AUTHZ)
+
+        ctx.build_from_template(dest_dir, authz_section_key, ProvFileName.AUTHORIZATION_JSON_DEFAULT)
 
         # build relay__resources if relay is used by this client
         ct = client.get_connect_to()
@@ -551,6 +561,7 @@ class StaticFileBuilder(Builder):
         server_name = ctx.get(CtxKey.SERVER_NAME)
 
         replacement_dict = {
+            "admin_name": admin.name,
             "cn": f"{server_name}",
             "admin_port": f"{admin_port}",
             "docker_image": self.docker_image,
@@ -571,6 +582,13 @@ class StaticFileBuilder(Builder):
             ProvFileName.FL_ADMIN_SH,
             replacement=replacement_dict,
             exe=True,
+        )
+
+        ctx.build_from_template(
+            dest_dir,
+            TemplateSectionKey.ADM_NOTEBOOK,
+            ProvFileName.SYSTEM_INFO_IPYNB,
+            replacement=replacement_dict,
         )
 
         ctx.build_from_template(dest_dir, TemplateSectionKey.ADMIN_README, ProvFileName.README_TXT)

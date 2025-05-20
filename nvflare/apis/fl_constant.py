@@ -194,6 +194,7 @@ class FLContextKey(object):
     JOB_PROCESS_ARGS = ReservedKey.JOB_PROCESS_ARGS
     EVENT_PROCESSED = "__event_processed__"
     CELL_MESSAGE = "__cell_message__"
+    CLIENT_HIERARCHY = "__client_hierarchy__"
 
 
 class ProcessType:
@@ -230,7 +231,6 @@ class AdminCommandNames(object):
     DELETE_WORKSPACE = "delete_workspace"
     CHECK_RESOURCES = "check_resources"
     DEPLOY_APP = "deploy_app"
-    START_APP = "start_app"
     CHECK_STATUS = "check_status"
     ADMIN_CHECK_STATUS = "admin_check_status"
     ABORT = "abort"
@@ -562,6 +562,7 @@ class SystemVarName:
     RELAY_URL = "RELAY_URL"  # URL to relay that the CP is connected to
     SECURE_MODE = "SECURE_MODE"  # whether the system is running in secure mode
     JOB_CUSTOM_DIR = "JOB_CUSTOM_DIR"  # custom dir of the job
+    JOB_CONFIG_DIR = "JOB_CONFIG_DIR"  # custom dir of the job
     PYTHONPATH = "PYTHONPATH"
 
 
